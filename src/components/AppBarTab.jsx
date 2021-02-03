@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 const AppBarTab = ({name, link}) => {
   return (
     <View style={{ paddingRight: 20 }}>
-      <TouchableWithoutFeedback onPress>
+      <TouchableWithoutFeedback>
         <Link to={link}>
           <Text style={styles.tab}>{name}</Text>
         </Link>
