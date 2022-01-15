@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 
 const RepositoryItem = ({item}) => {
   return (
-    <View style={styles.itemContainer}>
+    <View testID="RepositoryItem" style={styles.itemContainer}>
       <View style={styles.upperContainer}>
         <Image
           style={styles.avatar}
@@ -58,10 +58,10 @@ const RepositoryItem = ({item}) => {
           }}
         />
         <View style={styles.infoContainer}>
-          <Text fontSize="subheading" fontWeight="bold" style={{ marginBottom: 5 }}>{item.fullName}</Text>
-          <Text color="textSecondary" style={{ marginBottom: 5 }}>{item.description}</Text>
+          <Text testID="fullName" fontSize="subheading" fontWeight="bold" style={{ marginBottom: 5 }}>{item.fullName}</Text>
+          <Text testID="description" color="textSecondary" style={{ marginBottom: 5 }}>{item.description}</Text>
           <View style={styles.languageContainer}>
-            <Text style={{ color: 'white' }}>{item.language}</Text>
+            <Text testID="language" style={{ color: 'white' }}>{item.language}</Text>
           </View>
         </View>
       </View>

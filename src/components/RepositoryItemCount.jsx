@@ -18,7 +18,7 @@ const formatCount = value => {
 };
 
 const RepositoryItemCount = ({ countName, count }) => (
-  <View style={styles.flexContainer}>
+  <View testID={countName} style={styles.flexContainer}>
     <Text fontWeight="bold" style={{ marginBottom: 5 }}>
       {formatCount(count)}
     </Text>
