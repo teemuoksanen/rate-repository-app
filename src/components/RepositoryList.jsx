@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList, View, StyleSheet } from 'react-native';
+import { useHistory } from "react-router-native";
 
 import useRepositories from '../hooks/useRepositories';
 import RepositoryItem from './RepositoryItem';
@@ -13,6 +14,8 @@ const styles = StyleSheet.create({
 const ItemSeparator = () => <View style={styles.separator} />;
 
 export const RepositoryListContainer = ({ repositories }) => {
+  const history = useHistory();
+
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
@@ -22,7 +25,7 @@ export const RepositoryListContainer = ({ repositories }) => {
       testID="RepositoryListContainer"
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
-      renderItem={RepositoryItem}
+      renderItem={({item}) => <RepositoryItem item={item} history={history} />}
       keyExtractor={item => item.id}
     />
   );

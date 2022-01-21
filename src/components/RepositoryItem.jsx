@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, TouchableWithoutFeedback, StyleSheet, Linking } from 'react-native';
+//import { useHistory } from "react-router-native";
+
 import Text from './Text';
 import RepositoryItemCount from './RepositoryItemCount';
 
@@ -45,33 +47,82 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  githubButton: {
+    display: 'flex',
+    backgroundColor: theme.colors.primary,
+    borderRadius: 5,
+    padding: 15,
+    marginTop: 10
+  },
+  githubButtonText: {
+    color: '#ffffff',
+    alignSelf: 'center',
+  },
 });
 
-const RepositoryItem = ({item}) => {
-  return (
-    <View testID="RepositoryItem" style={styles.itemContainer}>
-      <View style={styles.upperContainer}>
-        <Image
-          style={styles.avatar}
-          source={{
-            uri: item.ownerAvatarUrl,
-          }}
-        />
-        <View style={styles.infoContainer}>
-          <Text testID="fullName" fontSize="subheading" fontWeight="bold" style={{ marginBottom: 5 }}>{item.fullName}</Text>
-          <Text testID="description" color="textSecondary" style={{ marginBottom: 5 }}>{item.description}</Text>
-          <View style={styles.languageContainer}>
-            <Text testID="language" style={{ color: 'white' }}>{item.language}</Text>
-          </View>
+const UpperContainer = ({ item }) => {
+  return(
+    <View style={styles.upperContainer}>
+      <Image
+        style={styles.avatar}
+        source={{
+          uri: item.ownerAvatarUrl,
+        }}
+      />
+      <View style={styles.infoContainer}>
+        <Text testID="fullName" fontSize="subheading" fontWeight="bold" style={{ marginBottom: 5 }}>{item.fullName}</Text>
+        <Text testID="description" color="textSecondary" style={{ marginBottom: 5 }}>{item.description}</Text>
+        <View style={styles.languageContainer}>
+          <Text testID="language" style={{ color: 'white' }}>{item.language}</Text>
         </View>
       </View>
-      <View style={styles.lowerContainer}>
-        <RepositoryItemCount countName="Stars" count={item.stargazersCount} />
-        <RepositoryItemCount countName="Forks" count={item.forksCount} />
-        <RepositoryItemCount countName="Reviews" count={item.reviewCount} />
-        <RepositoryItemCount countName="Rating" count={item.ratingAverage} />
-      </View>
     </View>
+  );
+};
+
+const LowerContainer = ({ item }) => {
+  return(
+    <View style={styles.lowerContainer}>
+      <RepositoryItemCount countName="Stars" count={item.stargazersCount} />
+      <RepositoryItemCount countName="Forks" count={item.forksCount} />
+      <RepositoryItemCount countName="Reviews" count={item.reviewCount} />
+      <RepositoryItemCount countName="Rating" count={item.ratingAverage} />
+    </View>
+  );
+};
+
+const GithubButton = ({ item }) => {
+  const onGithubPress = () => {
+    Linking.openURL(`https://github.com/${item.fullName}`);
+  };
+
+  return(
+    <TouchableWithoutFeedback onPress={onGithubPress}>
+      <View style={styles.githubButton}>
+        <Text style={styles.githubButtonText} fontWeight="bold">Open in GitHub</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+};
+
+const RepositoryItem = ({ item, history = undefined, singleRepository = false }) => {
+  if (singleRepository) {
+    return (
+      <View testID="RepositoryItem" style={styles.itemContainer}>
+        <UpperContainer item={item} />
+        <LowerContainer item={item} />
+        <GithubButton item={item} />
+      </View>
+    );
+  }
+
+  return (
+    <TouchableWithoutFeedback onPress={() => history.push(`/repositories/${item.id}`)}>
+      <View testID="RepositoryItem" style={styles.itemContainer}>
+        <UpperContainer item={item} />
+        <LowerContainer item={item} />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
