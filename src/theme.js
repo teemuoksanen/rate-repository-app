@@ -12,6 +12,7 @@ const theme = {
   },
   fontSizes: {
     body: 14,
+    heading: 18,
     subheading: 16,
     appBarTab: 16,
   },

@@ -1,15 +1,37 @@
 import React from 'react';
+import { FlatList, View, StyleSheet } from 'react-native';
 import { useParams } from 'react-router-native';
 
 import useSingleRepository from '../hooks/useSingleRepository';
 import RepositoryItem from './RepositoryItem';
+import ReviewItem from './ReviewItem';
 import Text from './Text';
 
-export const SingleRepositoryContainer = ({ item }) => {
+const styles = StyleSheet.create({
+  separator: {
+    height: 10,
+  },
+});
+
+const ItemSeparator = () => <View style={styles.separator} />;
+
+export const SingleRepositoryContainer = ({ repository }) => {
+  const reviewNodes = repository
+    ? repository.reviews.edges.map((edge) => edge.node)
+    : [];
+
   return (
-    <RepositoryItem
-      item={item}
-      singleRepository="true"
+    <FlatList
+      data={reviewNodes}
+      ItemSeparatorComponent={ItemSeparator}
+      renderItem={({ item }) => <ReviewItem review={item} />}
+      keyExtractor={item => item.id}
+      ListHeaderComponent={() => (
+        <View>
+          <RepositoryItem item={repository} singleRepository="true" />
+          <ItemSeparator />
+        </View>
+      )}
     />
   );
 };
@@ -20,7 +42,7 @@ const SingleRepository = () => {
   if (!repository) {
     return (<Text>Loading repository...</Text>);
   }
-  return <SingleRepositoryContainer item={repository} />;
+  return <SingleRepositoryContainer repository={repository} />;
 };
 
 export default SingleRepository;

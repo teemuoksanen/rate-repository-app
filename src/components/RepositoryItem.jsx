@@ -22,19 +22,20 @@ const styles = StyleSheet.create({
   infoContainer: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingTop: 0,
     paddingRight: 15,
     paddingBottom: 15,
     paddingLeft: 20,
+    flex: 1,
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 5,
   },
-  languageContainer: {
+  language: {
     alignSelf: 'flex-start',
     backgroundColor: theme.colors.primary,
     borderRadius: 5,
@@ -42,20 +43,35 @@ const styles = StyleSheet.create({
     marginTop: 5,
     padding: 5,
   },
+  languageText: {
+    color: 'white',
+    alignSelf: 'center',
+  },
   lowerContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  headerText: {
+    fontSize: theme.fontSizes.heading,
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.textPrimary,
+    marginBottom: 5,
+  },
+  descriptionText: {
+    color: theme.colors.textSecondary,
+    marginBottom: 5,
   },
   githubButton: {
     display: 'flex',
     backgroundColor: theme.colors.primary,
     borderRadius: 5,
     padding: 15,
-    marginTop: 10
+    marginTop: 10,
   },
   githubButtonText: {
-    color: '#ffffff',
+    color: 'white',
+    fontWeight: theme.fontWeights.bold,
     alignSelf: 'center',
   },
 });
@@ -70,10 +86,10 @@ const UpperContainer = ({ item }) => {
         }}
       />
       <View style={styles.infoContainer}>
-        <Text testID="fullName" fontSize="subheading" fontWeight="bold" style={{ marginBottom: 5 }}>{item.fullName}</Text>
-        <Text testID="description" color="textSecondary" style={{ marginBottom: 5 }}>{item.description}</Text>
-        <View style={styles.languageContainer}>
-          <Text testID="language" style={{ color: 'white' }}>{item.language}</Text>
+        <Text testID="fullName" style={styles.headerText}>{item.fullName}</Text>
+        <Text testID="description" style={styles.descriptionText}>{item.description}</Text>
+        <View style={styles.language}>
+          <Text testID="language" style={styles.languageText}>{item.language}</Text>
         </View>
       </View>
     </View>
@@ -99,7 +115,7 @@ const GithubButton = ({ item }) => {
   return(
     <TouchableWithoutFeedback onPress={onGithubPress}>
       <View style={styles.githubButton}>
-        <Text style={styles.githubButtonText} fontWeight="bold">Open in GitHub</Text>
+        <Text style={styles.githubButtonText}>Open in GitHub</Text>
       </View>
     </TouchableWithoutFeedback>
   );

@@ -16,6 +16,15 @@ export const REPOSITORY_BASE_FIELDS = gql`
   }
 `;
 
+export const REVIEW_BASE_FIELDS = gql`
+  fragment reviewBaseFields on Review {
+    id
+    text
+    rating
+    createdAt
+  }
+`;
+
 export const USER_BASE_FIELDS = gql`
   fragment userBaseFields on User {
     id
