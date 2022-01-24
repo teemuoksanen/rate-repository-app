@@ -6,6 +6,7 @@ import AppBar from './AppBar';
 import RepositoryList from './RepositoryList';
 import SingleRepository from './SingleRepository';
 import SignIn from './SignIn';
+import SignUp from './SignUp';
 import Review from './Review';
 import theme from '../theme';
 
@@ -25,7 +26,7 @@ const Main = () => {
         <Route path="/repositories/:id">
           <SingleRepository />
         </Route>
-        <Route path="/review">
+        <Route path="/review" exact>
           <Review />
         </Route>
         <Route path="/" exact>
@@ -33,6 +34,9 @@ const Main = () => {
         </Route>
         <Route path="/signin" exact>
           <SignIn />
+        </Route>
+        <Route path="/signup" exact>
+          <SignUp />
         </Route>
         <Redirect to="/" />
       </Switch>
