@@ -1,38 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FlatList, View, StyleSheet } from 'react-native';
 import { useHistory } from "react-router-native";
-import { Picker } from "@react-native-picker/picker";
+import { useDebounce } from 'use-debounce';
 
 import useRepositories from '../hooks/useRepositories';
+import Search from './Search';
+import RepositorySorter from './RepositorySorter';
 import RepositoryItem from './RepositoryItem';
 
 const styles = StyleSheet.create({
   separator: {
     height: 10,
   },
-  picker: {
-    height: 50
-  }
 });
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-const SortMenu = ({ sorting, setSorting }) => {
-  return (
-    <Picker
-      selectedValue={sorting}
-      style={styles.picker}
-      onValueChange={(itemValue, itemIndex) =>
-        setSorting(itemValue)
-      }>
-      <Picker.Item label="Lastest repositories" value="latest" />
-      <Picker.Item label="Highest rated repositories" value="highestRated" />
-      <Picker.Item label="Lowest rated repositories" value="lowestRated" />
-    </Picker>
-  );
-};
-
-export const RepositoryListContainer = ({ repositories, sorting, setSorting }) => {
+export const RepositoryListContainer = ({ repositories, sorting, setSorting, search, setSearch }) => {
   const history = useHistory();
 
   const repositoryNodes = repositories
@@ -46,27 +30,34 @@ export const RepositoryListContainer = ({ repositories, sorting, setSorting }) =
       ItemSeparatorComponent={ItemSeparator}
       renderItem={({item}) => <RepositoryItem item={item} history={history} />}
       keyExtractor={item => item.id}
-      ListHeaderComponent={<SortMenu sorting={sorting} setSorting={setSorting} />}
+      ListHeaderComponent={
+        <View>
+          <Search search={search} setSearch={setSearch} />
+          <RepositorySorter sorting={sorting} setSorting={setSorting} />
+        </View>
+      }
     />
   );
 };
 
 const RepositoryList = () => {
   const [sorting, setSorting] = useState();
+  const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 500);
   
-  let variables;
+  let variables = { ...variables, searchKeyword: debouncedSearch };;
 
   if (sorting === "highestRated") {
-    variables = { orderBy: 'RATING_AVERAGE', orderDirection: 'DESC' };
+    variables = { ...variables, orderBy: 'RATING_AVERAGE', orderDirection: 'DESC' };
   } else if (sorting === "lowestRated") {
-    variables = { orderBy: 'RATING_AVERAGE', orderDirection: 'ASC' };
+    variables = { ...variables, orderBy: 'RATING_AVERAGE', orderDirection: 'ASC' };
   } else {
-    variables = { orderBy: 'CREATED_AT' };
+    variables = { ...variables, orderBy: 'CREATED_AT', orderDirection: 'DESC' };
   }
   
   const { repositories } = useRepositories(variables);
 
-  return <RepositoryListContainer repositories={repositories} sorting={sorting} setSorting={setSorting} />;
+  return <RepositoryListContainer repositories={repositories} sorting={sorting} setSorting={setSorting} search={search} setSearch={setSearch} />;
 };
 
 export default RepositoryList;
