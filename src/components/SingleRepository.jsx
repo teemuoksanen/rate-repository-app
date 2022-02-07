@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-export const SingleRepositoryContainer = ({ repository }) => {
+export const SingleRepositoryContainer = ({ repository, onEndReach }) => {
   const reviewNodes = repository
     ? repository.reviews.edges.map((edge) => edge.node)
     : [];
@@ -26,6 +26,8 @@ export const SingleRepositoryContainer = ({ repository }) => {
       ItemSeparatorComponent={ItemSeparator}
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={item => item.id}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
       ListHeaderComponent={() => (
         <View>
           <RepositoryItem item={repository} singleRepository="true" />
@@ -38,11 +40,22 @@ export const SingleRepositoryContainer = ({ repository }) => {
 
 const SingleRepository = () => {
   const { id } = useParams();
-  const { repository } = useSingleRepository({ id });
+  let variables = {
+    ...variables,
+    id: id,
+    first: 8
+  };
+
+  const { repository, fetchMore } = useSingleRepository(variables);
+
+  const onEndReach = () => {
+    fetchMore();
+  };
+
   if (!repository) {
     return (<Text>Loading repository...</Text>);
   }
-  return <SingleRepositoryContainer repository={repository} />;
+  return <SingleRepositoryContainer repository={repository} onEndReach={onEndReach} />;
 };
 
 export default SingleRepository;
