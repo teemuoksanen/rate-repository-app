@@ -16,7 +16,14 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-export const RepositoryListContainer = ({ repositories, sorting, setSorting, search, setSearch }) => {
+export const RepositoryListContainer = ({
+  repositories,
+  onEndReach,
+  sorting,
+  setSorting,
+  search,
+  setSearch
+}) => {
   const history = useHistory();
 
   const repositoryNodes = repositories
@@ -30,6 +37,8 @@ export const RepositoryListContainer = ({ repositories, sorting, setSorting, sea
       ItemSeparatorComponent={ItemSeparator}
       renderItem={({item}) => <RepositoryItem item={item} history={history} />}
       keyExtractor={item => item.id}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
       ListHeaderComponent={
         <View>
           <Search search={search} setSearch={setSearch} />
@@ -45,19 +54,48 @@ const RepositoryList = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
   
-  let variables = { ...variables, searchKeyword: debouncedSearch };;
+  let variables = {
+    ...variables,
+    searchKeyword: debouncedSearch,
+    first: 8
+  };
 
   if (sorting === "highestRated") {
-    variables = { ...variables, orderBy: 'RATING_AVERAGE', orderDirection: 'DESC' };
+    variables = {
+      ...variables,
+      orderBy: 'RATING_AVERAGE',
+      orderDirection: 'DESC'
+    };
   } else if (sorting === "lowestRated") {
-    variables = { ...variables, orderBy: 'RATING_AVERAGE', orderDirection: 'ASC' };
+    variables = {
+      ...variables,
+      orderBy: 'RATING_AVERAGE',
+      orderDirection: 'ASC'
+    };
   } else {
-    variables = { ...variables, orderBy: 'CREATED_AT', orderDirection: 'DESC' };
+    variables = {
+      ...variables,
+      orderBy: 'CREATED_AT',
+      orderDirection: 'DESC'
+    };
   }
   
-  const { repositories } = useRepositories(variables);
+  const { repositories, fetchMore } = useRepositories(variables);
 
-  return <RepositoryListContainer repositories={repositories} sorting={sorting} setSorting={setSorting} search={search} setSearch={setSearch} />;
+  const onEndReach = () => {
+    fetchMore();
+  };
+
+  return (
+    <RepositoryListContainer
+      repositories={repositories}
+      onEndReach={onEndReach}
+      sorting={sorting}
+      setSorting={setSorting}
+      search={search}
+      setSearch={setSearch}
+    />
+  );
 };
 
 export default RepositoryList;
