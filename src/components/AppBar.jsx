@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 
-import useAuthorizedUser from '../hooks/useAuthorizedUser';
+import useCurrentUser from '../hooks/useCurrentUser';
 import AppBarTab from './AppBarTab';
 import SignOut from './SignOut';
 import theme from '../theme';
@@ -20,25 +20,28 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexDirection: 'row',
-    marginHorizontal: 20,
   },
 });
 
 const AppBar = () => {
-  const userIsLoggedIn = useAuthorizedUser();
+  const currentUser = useCurrentUser();
+  const userIsLoggedIn = (currentUser.authorizedUser != null);
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} horizontal>
         <AppBarTab name="Repositories" link="/" />
-        <AppBarTab name="Create a review" link="/review" />
         {userIsLoggedIn ? (
-          <SignOut />
+          <ScrollView style={styles.scrollView} horizontal>
+            <AppBarTab name="Create a review" link="/review" />
+            <AppBarTab name="My reviews" link="/myreviews" />
+            <AppBarTab name="Sign out" link="/signout" />
+          </ScrollView>
         ) : (
-          <AppBarTab name="Sign in" link="/signin" />
-        )}
-        {!userIsLoggedIn && (
-          <AppBarTab name="Sign up" link="/signup" />
+          <ScrollView style={styles.scrollView} horizontal>
+            <AppBarTab name="Sign in" link="/signin" />
+            <AppBarTab name="Sign up" link="/signup" />
+          </ScrollView>
         )}
       </ScrollView>
     </View>

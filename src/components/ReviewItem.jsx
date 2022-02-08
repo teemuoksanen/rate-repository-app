@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ReviewItem = ({ review }) => {
+const ReviewItem = ({ review, header = "username" }) => {
   const reviewDate = format(new Date(review.createdAt), 'd.M.yyy');
 
   return(
@@ -67,7 +67,11 @@ const ReviewItem = ({ review }) => {
         <Text testID="reviewRating" style={styles.ratingText}>{review.rating}</Text>
       </View>
       <View style={styles.reviewInfoContainer}>
-        <Text testID="reviewName" style={styles.headerText}>{review.user.username}</Text>
+        {(header == "repository") ? (
+          <Text testID="reviewName" style={styles.headerText}>{review.repository.fullName}</Text>
+        ) : (
+          <Text testID="reviewName" style={styles.headerText}>{review.user.username}</Text>
+        )}
         <Text testID="reviewDate" style={styles.dateText}>{reviewDate}</Text>
         <Text testID="review" style={styles.reviewText}>{review.text}</Text>
       </View>

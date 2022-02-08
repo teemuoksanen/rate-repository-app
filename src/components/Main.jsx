@@ -5,8 +5,10 @@ import { Route, Switch, Redirect } from 'react-router-native';
 import AppBar from './AppBar';
 import RepositoryList from './RepositoryList';
 import SingleRepository from './SingleRepository';
+import MyReviews from './MyReviews';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
+import SignOut from './SignOut';
 import Review from './Review';
 import theme from '../theme';
 
@@ -32,11 +34,17 @@ const Main = () => {
         <Route path="/" exact>
           <RepositoryList />
         </Route>
+        <Route path="/myreviews" exact>
+          <MyReviews />
+        </Route>
         <Route path="/signin" exact>
           <SignIn />
         </Route>
         <Route path="/signup" exact>
           <SignUp />
+        </Route>
+        <Route path="/signout" exact>
+          <SignOut />
         </Route>
         <Redirect to="/" />
       </Switch>

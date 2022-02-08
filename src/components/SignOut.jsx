@@ -1,27 +1,20 @@
 import React from 'react';
-import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
+import { useHistory } from 'react-router-native';
 
 import useSignOut from '../hooks/useSignOut';
-import theme from '../theme';
-
-const styles = StyleSheet.create({
-  tab: {
-    color: theme.colors.appBarText,
-    fontSize: theme.fontSizes.appBarTab,
-    fontWeight: theme.fontWeights.bold,
-  }
-});
 
 const SignOut = () => {
   const [signOut] = useSignOut();
+  const history = useHistory();
 
-  return (
-    <View style={{ paddingRight: 20 }}>
-      <TouchableWithoutFeedback onPress={signOut}>
-        <Text style={styles.tab}>Sign out</Text>
-      </TouchableWithoutFeedback>
-    </View>
-  );
+  try {
+    signOut();
+    history.push('/');
+  } catch (e) {
+    console.log(e);
+  }
+
+  return null;
 };
 
 export default SignOut;
