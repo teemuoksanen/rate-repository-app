@@ -80,6 +80,7 @@ export const GET_CURRENT_USER = gql`
           node {
             ...reviewBaseFields
             repository {
+              id
               fullName
             }
           }

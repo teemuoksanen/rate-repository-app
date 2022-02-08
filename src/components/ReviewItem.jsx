@@ -1,12 +1,18 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, TouchableWithoutFeedback, StyleSheet, Alert } from 'react-native';
 import { format } from 'date-fns';
+import { useHistory } from 'react-router-native';
 
+import useDeleteReview from '../hooks/useDeleteReview';
 import Text from './Text';
-
 import theme from '../theme';
 
 const styles = StyleSheet.create({
+  itemContainer: {
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+  },
   reviewContainer: {
     backgroundColor: 'white',
     flexGrow: 1,
@@ -56,25 +62,92 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     marginBottom: 5,
   },
+  buttonContainer: {
+    backgroundColor: 'white',
+    flexGrow: 1,
+    flexShrink: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingBottom: 15,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  viewButton: {
+    display: 'flex',
+    backgroundColor: theme.colors.primary,
+    borderRadius: 5,
+    padding: 15,
+    marginRight: 15,
+  },
+  deleteButton: {
+    display: 'flex',
+    backgroundColor: theme.colors.error,
+    borderRadius: 5,
+    padding: 15
+  },
+  buttonText: {
+    color: '#ffffff',
+    alignSelf: 'center',
+    fontWeight: theme.fontWeights.bold,
+  },
 });
 
-const ReviewItem = ({ review, header = "username" }) => {
+const ReviewItem = ({ review, refetch, header = "username" }) => {
+  const history = useHistory();
+  const [deleteReview] = useDeleteReview();
   const reviewDate = format(new Date(review.createdAt), 'd.M.yyy');
 
+  const deleteWarning = () =>
+    Alert.alert(
+      "Delete review",
+      "Are you sure you want to delete this review?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          onPress: async () => {
+            const id = review.id;
+            await deleteReview({id});
+            refetch();
+          }
+        }
+      ]
+    );
+
   return(
-    <View style={styles.reviewContainer}>
-      <View style={styles.ratingContainer}>
-        <Text testID="reviewRating" style={styles.ratingText}>{review.rating}</Text>
+    <View style={styles.itemContainer}>
+      <View style={styles.reviewContainer}>
+        <View style={styles.ratingContainer}>
+          <Text testID="reviewRating" style={styles.ratingText}>{review.rating}</Text>
+        </View>
+        <View style={styles.reviewInfoContainer}>
+          {(header == "repository") ? (
+            <Text testID="reviewName" style={styles.headerText}>{review.repository.fullName}</Text>
+          ) : (
+            <Text testID="reviewName" style={styles.headerText}>{review.user.username}</Text>
+          )}
+          <Text testID="reviewDate" style={styles.dateText}>{reviewDate}</Text>
+          <Text testID="review" style={styles.reviewText}>{review.text}</Text>
+        </View>
       </View>
-      <View style={styles.reviewInfoContainer}>
-        {(header == "repository") ? (
-          <Text testID="reviewName" style={styles.headerText}>{review.repository.fullName}</Text>
-        ) : (
-          <Text testID="reviewName" style={styles.headerText}>{review.user.username}</Text>
-        )}
-        <Text testID="reviewDate" style={styles.dateText}>{reviewDate}</Text>
-        <Text testID="review" style={styles.reviewText}>{review.text}</Text>
-      </View>
+      {(header == "repository") && (
+        <View style={styles.buttonContainer}>
+          <TouchableWithoutFeedback onPress={() => history.push(`/repositories/${review.repository.id}`)}>
+            <View style={styles.viewButton}>
+              <Text style={styles.buttonText}>View repository</Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={ deleteWarning }>
+            <View style={styles.deleteButton}>
+              <Text style={styles.buttonText}>Delete review</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
     </View>
   );
 };
